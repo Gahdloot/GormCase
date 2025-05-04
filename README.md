@@ -57,7 +57,17 @@ func NewUser() *User {
 }
 ```
 
-2. Create a migration:
+2. Generate and run migrations:
+
+```bash
+# Generate migrations for your models
+./makemigrations pkg/models/user.go
+
+# Run the migrations
+./migrate up
+```
+
+The generated migration will look like this:
 
 ```go
 package migrations
@@ -65,38 +75,29 @@ package migrations
 import (
     "context"
     "database/sql"
+    "fmt"
 )
 
-type Migration001CreateUsersTable struct{}
+// Migration20240321123456CreateUsersTable represents the migration for User
+type Migration20240321123456CreateUsersTable struct{}
 
-func (m *Migration001CreateUsersTable) Up(ctx context.Context, tx *sql.Tx) error {
-    query := `
-        CREATE TABLE IF NOT EXISTS users (
-            id SERIAL PRIMARY KEY,
-            username VARCHAR(150) NOT NULL UNIQUE,
-            email VARCHAR(254) NOT NULL UNIQUE,
-            password VARCHAR(128) NOT NULL,
-            first_name VARCHAR(150),
-            last_name VARCHAR(150),
-            is_active BOOLEAN NOT NULL DEFAULT true,
-            last_login TIMESTAMP WITH TIME ZONE,
-            date_joined TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
-        );
-    `
+// Up creates the users table
+func (m *Migration20240321123456CreateUsersTable) Up(ctx context.Context, tx *sql.Tx) error {
+    query := "CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, username VARCHAR(150) NOT NULL, email VARCHAR(254) NOT NULL, password VARCHAR(128) NOT NULL, first_name VARCHAR(150), last_name VARCHAR(150), is_active BOOLEAN NOT NULL DEFAULT true, last_login TIMESTAMP WITH TIME ZONE, date_joined TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP, created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP);"
     _, err := tx.ExecContext(ctx, query)
     return err
 }
 
-func (m *Migration001CreateUsersTable) Down(ctx context.Context, tx *sql.Tx) error {
-    query := `DROP TABLE IF EXISTS users CASCADE;`
+// Down drops the users table
+func (m *Migration20240321123456CreateUsersTable) Down(ctx context.Context, tx *sql.Tx) error {
+    query := "DROP TABLE IF EXISTS users CASCADE;"
     _, err := tx.ExecContext(ctx, query)
     return err
 }
 
-func (m *Migration001CreateUsersTable) Name() string {
-    return "001_create_users_table"
+// Name returns the name of the migration
+func (m *Migration20240321123456CreateUsersTable) Name() string {
+    return "20240321123456_create_users_table"
 }
 ```
 
@@ -189,18 +190,61 @@ err := user.FindByUsername(ctx, "john_doe")
 
 ### Migrations
 
-```go
-// Run migrations
-migrationManager := migration.NewMigrationManager(db)
-migrationManager.AddMigration(&migrations.Migration001CreateUsersTable{})
-err := migrationManager.Migrate(ctx)
+The ORM includes a migration system similar to Django's. Here's how to use it:
 
-// Rollback last migration
-err := migrationManager.Rollback(ctx)
+### 1. Generate Migrations
 
-// Reset all migrations
-err := migrationManager.Reset(ctx)
+After making changes to your models, generate migration files:
+
+```bash
+# Build the makemigrations command
+go build -o makemigrations cmd/makemigrations/main.go
+
+# Generate migrations for a model
+./makemigrations pkg/models/user.go
 ```
+
+This will:
+
+- Parse your model file
+- Generate appropriate SQL migrations
+- Create migration files in `pkg/migration/migrations`
+
+### 2. Run Migrations
+
+Apply migrations to your database:
+
+```bash
+# Build the migrate command
+go build -o migrate cmd/migrate/main.go
+
+# Run all pending migrations
+./migrate up
+
+# Rollback the last migration
+./migrate down
+
+# Reset all migrations
+./migrate reset
+
+# Check migration status
+./migrate status
+```
+
+The migration system:
+
+- Tracks applied migrations
+- Runs migrations in order
+- Wraps each migration in a transaction
+- Provides rollback capabilities
+- Shows migration status
+
+### Migration Workflow
+
+1. Make changes to your models
+2. Run `makemigrations` to generate migration files
+3. Review the generated migrations
+4. Run `migrate up` to apply the changes to the database
 
 ### Validation
 

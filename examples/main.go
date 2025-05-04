@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/mac/gorm-orm/pkg/models"
+	"github.com/Gahdloot/GormCase/pkg/models"
 )
 
 func main() {
@@ -26,7 +26,7 @@ func main() {
 	defer db.Close()
 
 	// Create a new user
-	user := NewUser()
+	user := models.NewUser()
 	user.Username.SetValue("john_doe")
 	user.Email.SetValue("john@example.com")
 	user.Password.SetValue("hashed_password")
@@ -42,7 +42,7 @@ func main() {
 	fmt.Printf("Created user with ID: %v\n", user.GetID())
 
 	// Find the user by ID
-	foundUser := NewUser()
+	foundUser := models.NewUser()
 	if err := foundUser.FindByID(ctx, user.GetID().(int)); err != nil {
 		log.Fatalf("Failed to find user: %v", err)
 	}

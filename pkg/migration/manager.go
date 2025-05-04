@@ -196,3 +196,42 @@ func (m *MigrationManager) Reset(ctx context.Context) error {
 	}
 	return nil
 }
+
+// MigrationStatus represents the status of a migration
+type MigrationStatus struct {
+	Name   string
+	Status string
+}
+
+// Status returns the status of all migrations
+func (m *MigrationManager) Status(ctx context.Context) ([]MigrationStatus, error) {
+	// Create migrations table if it doesn't exist
+	if err := m.createMigrationsTable(ctx); err != nil {
+		return nil, fmt.Errorf("failed to create migrations table: %v", err)
+	}
+
+	// Get list of applied migrations
+	migrated, err := m.getMigratedNames(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get migrated names: %v", err)
+	}
+
+	// Sort migrations by name
+	sort.Slice(m.migrations, func(i, j int) bool {
+		return m.migrations[i].Name() < m.migrations[j].Name()
+	})
+
+	// Create status list
+	status := make([]MigrationStatus, len(m.migrations))
+	for i, migration := range m.migrations {
+		status[i] = MigrationStatus{
+			Name:   migration.Name(),
+			Status: "pending",
+		}
+		if migrated[migration.Name()] {
+			status[i].Status = "applied"
+		}
+	}
+
+	return status, nil
+}
