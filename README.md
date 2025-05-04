@@ -16,7 +16,7 @@ A Django-like ORM for Golang that is compatible with PostgreSQL.
 ## Installation
 
 ```bash
-go get github.com/mac/gorm-orm
+go get github.com/Gahdloot/GormCase
 ```
 
 ## Quick Start
@@ -27,8 +27,8 @@ go get github.com/mac/gorm-orm
 package models
 
 import (
-    "github.com/mac/gorm-orm/pkg/fields"
-    "github.com/mac/gorm-orm/pkg/models"
+    "github.com/Gahdloot/GormCase/pkg/fields"
+    "github.com/Gahdloot/GormCase/pkg/models"
 )
 
 type User struct {
@@ -110,9 +110,9 @@ import (
     "fmt"
     "log"
 
-    "github.com/mac/gorm-orm/pkg/migration"
-    "github.com/mac/gorm-orm/pkg/migration/migrations"
-    "github.com/mac/gorm-orm/pkg/models"
+    "github.com/Gahdloot/GormCase/pkg/migration"
+    "github.com/Gahdloot/GormCase/pkg/migration/migrations"
+    "github.com/Gahdloot/GormCase/pkg/models"
 )
 
 func main() {

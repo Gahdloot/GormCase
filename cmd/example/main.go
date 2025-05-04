@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/mac/gorm-orm/pkg/migration"
-	"github.com/mac/gorm-orm/pkg/migration/migrations"
-	"github.com/mac/gorm-orm/pkg/models"
+	"github.com/Gahdloot/GormCase/pkg/migration"
+	"github.com/Gahdloot/GormCase/pkg/migration/migrations"
+	"github.com/Gahdloot/GormCase/pkg/models"
 )
 
 func main() {

@@ -1,4 +1,4 @@
-module github.com/mac/gorm-orm
+module github.com/Gahdloot/GormCase
 
 go 1.21
 

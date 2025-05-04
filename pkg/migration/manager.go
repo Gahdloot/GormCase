@@ -7,7 +7,7 @@ import (
 	"sort"
 	"time"
 
-	"github.com/mac/gorm-orm/pkg/models"
+	"github.com/Gahdloot/GormCase/pkg/models"
 )
 
 // Migration represents a database migration

@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mac/gorm-orm/pkg/fields"
+	"github.com/Gahdloot/GormCase/pkg/fields"
 	"github.com/pkg/errors"
 )
 
